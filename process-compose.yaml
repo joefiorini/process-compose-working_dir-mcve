@@ -1,0 +1,17 @@
+log_level: debug
+processes:
+  clientA:
+    working_dir: "clientA"
+    is_daemon: true
+    command: "sleep 10 && touch ready"
+    shutdown:
+      command: "rm ready"
+    readiness_probe:
+      exec:
+        command: "echo $(pwd) > ready-check && test -f ready"
+  clientB:
+    command: "echo all done!"
+    depends_on:
+      clientA:
+        condition: process_healthy
+
